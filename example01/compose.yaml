@@ -1,0 +1,11 @@
+services:
+  app:
+    container_name: samplePythonv1
+    image: python12ap
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8081:5000
+    environment:
+      - COLOR=green
