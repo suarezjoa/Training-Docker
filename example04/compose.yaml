@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  dotnet-app:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    ports:
+      - "5000:80"
+    networks:
+      - votacion-red
+    depends_on:
+      - db
+      - redis
+
+  python-app:
+    build:
+      context: ./vote
+      dockerfile: Dockerfile
+    ports:
+      - "5001:80"
+    networks:
+      - votacion-red
+    depends_on:
+      - redis
+
+  node-app:
+    build:
+      context: ./result
+      dockerfile: dockerfile
+    ports:
+      - "5002:4000"
+    networks:
+      - votacion-red
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - votacion-red
+
+  redis:
+    image: redis:alpine
+    networks:
+      - votacion-red
+
+networks:
+  votacion-red:
+    driver: bridge
