@@ -1,10 +1,11 @@
 version: '3.8'
 
 services:
-  dotnet-app:
+  control-db-dotnet:
     build:
       context: ./worker
       dockerfile: Dockerfile
+    image: control-db-dotnet:v1
     ports:
       - "5000:80"
     networks:
@@ -13,10 +14,11 @@ services:
       - db
       - redis
 
-  python-app:
+  back-python:
     build:
       context: ./vote
       dockerfile: Dockerfile
+    image: back-python:v1
     ports:
       - "5001:80"
     networks:
@@ -24,10 +26,11 @@ services:
     depends_on:
       - redis
 
-  node-app:
+  front-node:
     build:
       context: ./result
       dockerfile: dockerfile
+    image: front-node:v1
     ports:
       - "5002:4000"
     networks:
@@ -37,14 +40,20 @@ services:
       - redis
 
   db:
-    image: postgres:17-alpine
+    build:
+      context: ./db
+      dockerfile: dockerfile
+    image: postgres:v1
     environment:
       POSTGRES_PASSWORD: postgres
     networks:
       - votacion-red
 
   redis:
-    image: redis:alpine
+    build:
+      context: ./redis
+      dockerfile: dockerfile
+    image: redis:v1
     networks:
       - votacion-red
 
